@@ -6,6 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,47 +21,53 @@ public class PlayerModel {
     private String name;
     private String surname;
     private int number;
+    private OffsetDateTime dateOfBirth;
 
 
-    public static PlayerModel mapEntityToModel(PlayerEntity playerEntity){
+    public static PlayerModel mapEntityToModel(PlayerEntity playerEntity) {
         return new PlayerModel(
                 playerEntity.getId(),
                 playerEntity.getName(),
                 playerEntity.getSurname(),
-                playerEntity.getNumber()
+                playerEntity.getNumber(),
+                playerEntity.getDateOfBirth()
         );
     }
 
 
-    public static PlayerEntity mapModelToEntity(PlayerModel playerModel){
+    public static PlayerEntity mapModelToEntity(PlayerModel playerModel) {
         return new PlayerEntity(
                 playerModel.getId(),
                 playerModel.getName(),
                 playerModel.getSurname(),
-                playerModel.getNumber()
+                playerModel.getNumber(),
+                playerModel.getDateOfBirth()
         );
     }
 
 
-    public static PlayerResponse mapModelToResponse(PlayerModel playerModel){
+    public static PlayerResponse mapModelToResponse(PlayerModel playerModel) {
         return new PlayerResponse(
                 playerModel.getId(),
                 playerModel.getName(),
                 playerModel.getSurname(),
-                playerModel.getNumber()
+                playerModel.getNumber(),
+                playerModel.getDateOfBirth() == null ? "" : playerModel.getDateOfBirth().toString()
         );
     }
 
 
-
-    public static PlayerModel mapRequestToModel(CreatePlayerRequest createPlayerRequest){
+    public static PlayerModel mapRequestToModel(CreatePlayerRequest createPlayerRequest) {
         return new PlayerModel(
                 null,
                 createPlayerRequest.getName(),
                 createPlayerRequest.getSurname(),
-                createPlayerRequest.getNumber()
+                createPlayerRequest.getNumber(),
+               OffsetDateTime.parse(createPlayerRequest.getDateOfBirth())
         );
     }
+
+
 
 
 }

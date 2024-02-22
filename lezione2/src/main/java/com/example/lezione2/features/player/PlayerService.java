@@ -5,6 +5,8 @@ import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +18,16 @@ public class PlayerService {
     PlayerRepository playerRepository;
 
     public PlayerResponse createPlayer(CreatePlayerRequest request) {
-        PlayerModel playerRequestModel = mapRequestToModel(request);
-        PlayerEntity playerRequestEntity = mapModelToEntity(playerRequestModel);
-        PlayerEntity savedPlayerEntity = playerRepository.saveAndFlush(playerRequestEntity);
-        PlayerModel playerResponseModel = mapEntityToModel(savedPlayerEntity);
-        return mapModelToResponse(playerResponseModel);
+        if (checkDate(request.getDateOfBirth())==null){
+            return null;
+        }
+        else {
+            PlayerModel playerRequestModel = mapRequestToModel(request);
+            PlayerEntity playerRequestEntity = mapModelToEntity(playerRequestModel);
+            PlayerEntity savedPlayerEntity = playerRepository.saveAndFlush(playerRequestEntity);
+            PlayerModel playerResponseModel = mapEntityToModel(savedPlayerEntity);
+            return mapModelToResponse(playerResponseModel);
+        }
     }
 
     public Optional<PlayerEntity> findSinglePlayer(Long id) {
@@ -49,6 +56,14 @@ public class PlayerService {
             return true;
         } else {
             return false;
+        }
+    }
+    private OffsetDateTime checkDate(String date) {
+        try {
+            OffsetDateTime dateofBirth = OffsetDateTime.parse(date);
+            return dateofBirth;
+        } catch (DateTimeParseException e) {
+            return null;
         }
     }
 }

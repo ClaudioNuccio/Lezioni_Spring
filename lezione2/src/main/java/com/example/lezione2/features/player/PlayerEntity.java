@@ -3,6 +3,8 @@ package com.example.lezione2.features.player;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.OffsetDateTime;
+
 @Data
 @Entity
 @Table
@@ -19,4 +21,5 @@ public class PlayerEntity {
     private String name;
     private String surname;
     private int number;
+    private OffsetDateTime dateOfBirth;
 }
