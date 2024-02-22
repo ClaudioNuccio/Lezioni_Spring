@@ -3,6 +3,7 @@ package com.example.lezione2.features.player;
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class PlayerController {
     PlayerService playerService;
 
     @PostMapping(path = "/create")
-    public PlayerResponse createPlayer(@RequestBody CreatePlayerRequest request) {
+    public ResponseEntity<?> createPlayer(@RequestBody CreatePlayerRequest request) {
         return playerService.createPlayer(request);
     }
 

@@ -3,6 +3,8 @@ package com.example.lezione2.features.player;
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -17,16 +19,16 @@ public class PlayerService {
     @Autowired
     PlayerRepository playerRepository;
 
-    public PlayerResponse createPlayer(CreatePlayerRequest request) {
-        if (checkDate(request.getDateOfBirth())==null){
-            return null;
-        }
-        else {
+    public ResponseEntity<?> createPlayer(CreatePlayerRequest request) {
+        if (checkDate(request.getDateOfBirth()) == null) {
+            return ResponseEntity.status(600).body("Date of birth is wrong");
+            //return new ResponseEntity<>("Date of birth is wrong", HttpStatus.BAD_REQUEST);
+        } else {
             PlayerModel playerRequestModel = mapRequestToModel(request);
             PlayerEntity playerRequestEntity = mapModelToEntity(playerRequestModel);
             PlayerEntity savedPlayerEntity = playerRepository.saveAndFlush(playerRequestEntity);
             PlayerModel playerResponseModel = mapEntityToModel(savedPlayerEntity);
-            return mapModelToResponse(playerResponseModel);
+            return new ResponseEntity<PlayerResponse>(mapModelToResponse(playerResponseModel), HttpStatus.OK);
         }
     }
 
@@ -58,6 +60,7 @@ public class PlayerService {
             return false;
         }
     }
+
     private OffsetDateTime checkDate(String date) {
         try {
             OffsetDateTime dateofBirth = OffsetDateTime.parse(date);
