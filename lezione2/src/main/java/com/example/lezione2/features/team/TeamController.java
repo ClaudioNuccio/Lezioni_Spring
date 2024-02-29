@@ -24,12 +24,12 @@ public class TeamController {
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<TeamEntity> getSingleTeam(@PathVariable Long id) {
+    public Optional<TeamResponse> getSingleTeam(@PathVariable Long id) {
         return teamService.findSingleTeam(id);
     }
 
     @GetMapping(path = "/teams")
-    public List<TeamEntity> getAllTeam() {
+    public List<TeamResponse> getAllTeam() {
         return teamService.findAllTeams();
     }
 

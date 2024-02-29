@@ -5,6 +5,7 @@ import com.example.lezione2.features.team.dto.TeamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +22,26 @@ public class TeamService {
         return TeamModel.mapModelToResponse(teamEntityToModel);
     }
 
-    public Optional<TeamEntity> findSingleTeam(Long id) {
-        return teamRepository.findById(id);
+    public Optional<TeamResponse> findSingleTeam(Long id) {
+        Optional<TeamEntity> response = teamRepository.findById(id);
+        if (response.isPresent()) {
+            return Optional.of(TeamModel.mapModelToResponse(TeamModel.mapEntityToModel(response.get())));
+        } else return Optional.empty();
     }
 
-    public List<TeamEntity> findAllTeams() {
-        return teamRepository.findAll();
+    public List<TeamResponse> findAllTeams() {
+        List<TeamEntity> response = teamRepository.findAll();
+//        return response.stream().map(teamEntity -> {
+//            TeamModel entityToModel = TeamModel.mapEntityToModel(teamEntity);
+//            return TeamModel.mapModelToResponse(entityToModel);
+//        }).toList();
+
+        List<TeamResponse> result = new ArrayList<>();
+        for(TeamEntity teamEntity: response){
+            TeamModel entityToModel = TeamModel.mapEntityToModel(teamEntity);
+            result.add(TeamModel.mapModelToResponse(entityToModel));
+        }
+        return result;
     }
 
     public TeamResponse updateTeam(Long id, CreateTeamRequest createTeamRequest) {
