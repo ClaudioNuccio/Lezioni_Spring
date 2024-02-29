@@ -21,18 +21,18 @@ public class PlayerController {
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<PlayerEntity> getSinglePlayer(@PathVariable Long id) {
+    public Optional<PlayerResponse> getSinglePlayer(@PathVariable Long id) {
         return playerService.findSinglePlayer(id);
     }
 
     @GetMapping(path = "/players")
-    public List<PlayerEntity> getAllPlayer() {
+    public List<PlayerResponse> getAllPlayer() {
         return playerService.findAllPlayers();
     }
 
     @PutMapping(path = "/{id}/update")
-    public PlayerEntity updatePlayer(@PathVariable Long id, @RequestBody PlayerEntity playerEntity) {
-        return playerService.updatePlayer(id, playerEntity);
+    public PlayerResponse updatePlayer(@PathVariable Long id, @RequestBody CreatePlayerRequest createPlayerRequest) {
+        return playerService.updatePlayer(id, createPlayerRequest);
     }
 
     @DeleteMapping(path = "/{id}/delete")
