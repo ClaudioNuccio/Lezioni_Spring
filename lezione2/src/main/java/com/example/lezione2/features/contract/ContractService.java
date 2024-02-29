@@ -17,23 +17,23 @@ public class ContractService {
     @Autowired
     private TeamRepository teamRepository;
 
-    public Contract addPlayerToTeam(long idPlayer, long idTeam) {
-        Contract contract = new Contract();
-        contract.setPlayerEntity(playerRepository.getReferenceById(idPlayer));
-        contract.setTeam(teamRepository.getReferenceById(idTeam));
-        contractRepository.saveAndFlush(contract);
-        return contract;
+    public ContractEntity addPlayerToTeam(long idPlayer, long idTeam) {
+        ContractEntity contractEntity = new ContractEntity();
+        contractEntity.setPlayerEntity(playerRepository.getReferenceById(idPlayer));
+        contractEntity.setTeamEntity(teamRepository.getReferenceById(idTeam));
+        contractRepository.saveAndFlush(contractEntity);
+        return contractEntity;
     }
 
-    public List<Contract> getAllContracts() {
+    public List<ContractEntity> getAllContracts() {
         return contractRepository.findAll();
     }
 
-    public Contract updateContract(long id, Contract contract) {
-        Optional<Contract> contractToUpdate = contractRepository.findById(id);
+    public ContractEntity updateContract(long id, ContractEntity contractEntity) {
+        Optional<ContractEntity> contractToUpdate = contractRepository.findById(id);
         if (contractToUpdate.isPresent()) {
-            contractToUpdate.get().setPlayerEntity(contract.getPlayerEntity());
-            contractToUpdate.get().setTeam(contract.getTeam());
+            contractToUpdate.get().setPlayerEntity(contractEntity.getPlayerEntity());
+            contractToUpdate.get().setTeamEntity(contractEntity.getTeamEntity());
             return contractRepository.saveAndFlush(contractToUpdate.get());
         } else {
             return null;

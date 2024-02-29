@@ -1,7 +1,7 @@
 package com.example.lezione2.features.contract;
 
 import com.example.lezione2.features.player.PlayerEntity;
-import com.example.lezione2.features.team.Team;
+import com.example.lezione2.features.team.TeamEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Contract {
+public class ContractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,6 +23,6 @@ public class Contract {
 
     @OneToOne
     @JoinColumn(name = "id_team")
-    private Team team;
+    private TeamEntity teamEntity;
 
 }

@@ -1,7 +1,9 @@
 package com.example.lezione2.features.team;
 
-import com.example.lezione2.features.contract.Contract;
+import com.example.lezione2.features.contract.ContractEntity;
 import com.example.lezione2.features.contract.ContractService;
+import com.example.lezione2.features.team.dto.CreateTeamRequest;
+import com.example.lezione2.features.team.dto.TeamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,23 +19,23 @@ public class TeamController {
     ContractService contractService;
 
     @PostMapping(path = "/create")
-    public Team createTeam(@RequestBody Team team) {
-        return teamService.createTeam(team);
+    public TeamResponse createTeam(@RequestBody CreateTeamRequest createTeamRequest) {
+        return teamService.createTeam(createTeamRequest);
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<Team> getSingleTeam(@PathVariable Long id) {
+    public Optional<TeamEntity> getSingleTeam(@PathVariable Long id) {
         return teamService.findSingleTeam(id);
     }
 
     @GetMapping(path = "/teams")
-    public List<Team> getAllTeam() {
+    public List<TeamEntity> getAllTeam() {
         return teamService.findAllTeams();
     }
 
     @PutMapping(path = "/{id}/update")
-    public Team updateTeam(@PathVariable Long id, @RequestBody Team team) {
-        return teamService.updateTeam(id, team);
+    public TeamResponse updateTeam(@PathVariable Long id, @RequestBody CreateTeamRequest createTeamRequest) {
+        return teamService.updateTeam(id, createTeamRequest);
     }
 
     @DeleteMapping(path = "/{id}/delete")
@@ -42,7 +44,9 @@ public class TeamController {
     }
 
     @PutMapping(path = "/contract/create")
-    public Contract createContract(@RequestParam long idPlayer, @RequestParam long idTeam) {
+    public ContractEntity createContract(@RequestParam long idPlayer, @RequestParam long idTeam) {
         return contractService.addPlayerToTeam(idPlayer,idTeam);
     }
+//    @GetMapping(path="/{id}/teamandplayers")
+//    public
 }
