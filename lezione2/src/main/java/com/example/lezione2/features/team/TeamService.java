@@ -1,6 +1,11 @@
 package com.example.lezione2.features.team;
 
+import com.example.lezione2.features.contract.ContractEntity;
+import com.example.lezione2.features.contract.ContractRepository;
+import com.example.lezione2.features.player.PlayerEntity;
+import com.example.lezione2.features.player.PlayerRepository;
 import com.example.lezione2.features.team.dto.CreateTeamRequest;
+import com.example.lezione2.features.team.dto.TeamAndPlayerResponse;
 import com.example.lezione2.features.team.dto.TeamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +18,12 @@ import java.util.Optional;
 public class TeamService {
     @Autowired
     TeamRepository teamRepository;
+
+    @Autowired
+    ContractRepository contractRepository;
+
+    @Autowired
+    PlayerRepository playerRepository;
 
 
     public TeamResponse createTeam(CreateTeamRequest createTeamRequest) {
@@ -64,5 +75,21 @@ public class TeamService {
         } else {
             return false;
         }
+    }
+
+    public TeamAndPlayerResponse getTeamAndPlayer(Long teamId) {
+
+        Optional<TeamEntity> teamEntity = teamRepository.findById(teamId);
+        List<ContractEntity> teamContracts = contractRepository.getContractsByTeam(teamId);
+        List<PlayerEntity> teamPlayers = new ArrayList<>();
+        for(int i = 0; i < teamContracts.size(); i++){
+            ContractEntity teamContract = teamContracts.get(i);
+            PlayerEntity player = teamContract.getPlayerEntity();
+            teamPlayers.add(player);
+        }
+        System.out.println(teamEntity);
+        System.out.println(teamPlayers);
+        return new TeamAndPlayerResponse();
+
     }
 }

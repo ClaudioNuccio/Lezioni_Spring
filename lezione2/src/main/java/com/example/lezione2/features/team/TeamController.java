@@ -3,6 +3,7 @@ package com.example.lezione2.features.team;
 import com.example.lezione2.features.contract.ContractEntity;
 import com.example.lezione2.features.contract.ContractService;
 import com.example.lezione2.features.team.dto.CreateTeamRequest;
+import com.example.lezione2.features.team.dto.TeamAndPlayerResponse;
 import com.example.lezione2.features.team.dto.TeamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,8 @@ public class TeamController {
     public ContractEntity createContract(@RequestParam long idPlayer, @RequestParam long idTeam) {
         return contractService.addPlayerToTeam(idPlayer,idTeam);
     }
-//    @GetMapping(path="/{id}/teamandplayers")
-//    public
+    @GetMapping(path="/{teamId}/teamandplayers")
+    public TeamAndPlayerResponse getTeamAndPlayer(@PathVariable Long teamId){
+        return teamService.getTeamAndPlayer(teamId);
+    }
 }

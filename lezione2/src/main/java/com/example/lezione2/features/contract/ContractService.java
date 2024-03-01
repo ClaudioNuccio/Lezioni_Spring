@@ -40,4 +40,8 @@ public class ContractService {
         }
     }
 
+    public List<ContractEntity> getContractsByTeam(Long teamId){
+        return contractRepository.getContractsByTeam(teamId);
+    }
+
 }
