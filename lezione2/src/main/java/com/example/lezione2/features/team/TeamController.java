@@ -6,6 +6,7 @@ import com.example.lezione2.features.team.dto.CreateTeamRequest;
 import com.example.lezione2.features.team.dto.TeamAndPlayerResponse;
 import com.example.lezione2.features.team.dto.TeamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,13 +21,18 @@ public class TeamController {
     ContractService contractService;
 
     @PostMapping(path = "/create")
-    public TeamResponse createTeam(@RequestBody CreateTeamRequest createTeamRequest) {
-        return teamService.createTeam(createTeamRequest);
+    public ResponseEntity<TeamResponse> createTeam(@RequestBody CreateTeamRequest createTeamRequest) {
+        return ResponseEntity.status(200).body(teamService.createTeam(createTeamRequest));
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<TeamResponse> getSingleTeam(@PathVariable Long id) {
-        return teamService.findSingleTeam(id);
+    public ResponseEntity<?> getSingleTeam(@PathVariable Long id) {
+        Optional<TeamResponse> response = teamService.findSingleTeam(id);
+        if (response.isPresent()) {
+            return ResponseEntity.status(200).body(response.get());
+        }else {
+            return ResponseEntity.status(419).body("Team Not Found");
+        }
     }
 
     @GetMapping(path = "/teams")
