@@ -1,6 +1,7 @@
 package com.example.lezione2.features.player;
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
+import com.example.lezione2.features.player.dto.NetworkResponse;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,16 +21,16 @@ public class PlayerService {
     @Autowired
     PlayerRepository playerRepository;
 
-    public ResponseEntity<?> createPlayer(CreatePlayerRequest request) {
+    public NetworkResponse createPlayer(CreatePlayerRequest request) {
         if (convertDate(request.getDateOfBirth()) == null) {
-            return ResponseEntity.status(600).body("Date of birth is wrong");
+            return NetworkResponse.Error.builder().code(600).description("Date of Birth is wrong").build();
             //return new ResponseEntity<>("Date of birth is wrong", HttpStatus.BAD_REQUEST);
         } else {
             PlayerModel playerRequestModel = mapRequestToModel(request);
             PlayerEntity playerRequestEntity = mapModelToEntity(playerRequestModel);
             PlayerEntity savedPlayerEntity = playerRepository.saveAndFlush(playerRequestEntity);
             PlayerModel playerResponseModel = mapEntityToModel(savedPlayerEntity);
-            return new ResponseEntity<PlayerResponse>(mapModelToResponse(playerResponseModel), HttpStatus.OK);
+            return NetworkResponse.Success.builder().playerResponse(mapModelToResponse(playerResponseModel)).build();
         }
     }
 
@@ -43,7 +44,7 @@ public class PlayerService {
     public List<PlayerResponse> findAllPlayers() {
         List<PlayerEntity> response = playerRepository.findAll();
         List<PlayerResponse> result = new ArrayList<>();
-        for(PlayerEntity playerEntity: response){
+        for (PlayerEntity playerEntity : response) {
             PlayerModel entityToModel = PlayerModel.mapEntityToModel(playerEntity);
             result.add(PlayerModel.mapModelToResponse(entityToModel));
         }

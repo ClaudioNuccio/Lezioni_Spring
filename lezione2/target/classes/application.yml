@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/testtt
+    url: jdbc:mysql://127.0.0.1:3306/lezione
     username: root
-    password: admin
+    password: root123!
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     serialization:

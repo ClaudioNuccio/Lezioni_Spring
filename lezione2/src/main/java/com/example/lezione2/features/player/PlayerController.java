@@ -1,6 +1,7 @@
 package com.example.lezione2.features.player;
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
+import com.example.lezione2.features.player.dto.NetworkResponse;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,15 @@ public class PlayerController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<?> createPlayer(@RequestBody CreatePlayerRequest request) {
-        return playerService.createPlayer(request);
+        NetworkResponse response = playerService.createPlayer(request);
+        if (response instanceof NetworkResponse.Success) {
+            return  ResponseEntity.ok(((NetworkResponse.Success) response).getPlayerResponse());
+        } else {
+            int code = ((NetworkResponse.Error) response).getCode();
+            String description = ((NetworkResponse.Error) response).getDescription();
+            return ResponseEntity.status(code).body(description);
+        }
+
     }
 
     @GetMapping(path = "/{id}")
