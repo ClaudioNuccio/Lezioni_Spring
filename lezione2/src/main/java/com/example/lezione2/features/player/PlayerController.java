@@ -4,6 +4,8 @@ import com.example.lezione2.features.player.dto.CreatePlayerRequest;
 import com.example.lezione2.features.player.dto.NetworkResponse;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +22,7 @@ public class PlayerController {
     public ResponseEntity<?> createPlayer(@RequestBody CreatePlayerRequest request) {
         NetworkResponse response = playerService.createPlayer(request);
         if (response instanceof NetworkResponse.Success) {
-            return  ResponseEntity.ok(((NetworkResponse.Success) response).getPlayerResponse());
+            return  ResponseEntity.status(HttpStatus.CREATED).body(((NetworkResponse.Success) response).getPlayerResponse());
         } else {
             int code = ((NetworkResponse.Error) response).getCode();
             String description = ((NetworkResponse.Error) response).getDescription();

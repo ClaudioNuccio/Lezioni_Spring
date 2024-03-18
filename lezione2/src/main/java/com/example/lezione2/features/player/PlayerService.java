@@ -76,8 +76,7 @@ public class PlayerService {
 
     private OffsetDateTime convertDate(String date) {
         try {
-            OffsetDateTime dateofBirth = OffsetDateTime.parse(date);
-            return dateofBirth;
+            return OffsetDateTime.parse(date);
         } catch (DateTimeParseException e) {
             return null;
         }

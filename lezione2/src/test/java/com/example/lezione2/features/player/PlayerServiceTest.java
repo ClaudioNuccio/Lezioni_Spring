@@ -32,6 +32,7 @@ public class PlayerServiceTest {
         }
 
     }
+
     @Test
     void testCreatePlayerWithMalformedDate() {
         CreatePlayerRequest playerRequestWithMalformedDate = Fixtures.playerRequestWithMalformedDate();
@@ -43,6 +44,7 @@ public class PlayerServiceTest {
         }
 
     }
+
     @Test
     void testCreatePlayerWithDateMissingTime() {
         CreatePlayerRequest playerRequestWithoutTime = Fixtures.playerRequestWithoutTime();
@@ -58,12 +60,15 @@ public class PlayerServiceTest {
     @Test
     void testCreatePlayerWithCorrectValues() {
         CreatePlayerRequest playerRequestWithCorrectValues = Fixtures.playerRequest();
+        final Long playerId = 1L;
+
         when(playerRepository.saveAndFlush(Fixtures.playerEntity(playerRequestWithCorrectValues)))
-                .thenReturn(Fixtures.playerEntityWithId(playerRequestWithCorrectValues));
+                .thenReturn(Fixtures.playerEntityWithId(playerRequestWithCorrectValues, playerId));
+
         NetworkResponse result = playerService.createPlayer(playerRequestWithCorrectValues);
         if (result instanceof NetworkResponse.Success) {
             assertThat(result).isNotNull();
-            assertThat(((NetworkResponse.Success) result).getPlayerResponse().getId()).isEqualTo(1L);
+            assertThat(((NetworkResponse.Success) result).getPlayerResponse().getId()).isEqualTo(playerId);
             assertThat(((NetworkResponse.Success) result).getPlayerResponse().getName()).isEqualTo("Manuel");
         }
 
