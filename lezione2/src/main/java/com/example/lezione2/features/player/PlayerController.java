@@ -32,8 +32,15 @@ public class PlayerController {
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<PlayerResponse> getSinglePlayer(@PathVariable Long id) {
-        return playerService.findSinglePlayer(id);
+    public ResponseEntity<?> getSinglePlayer(@PathVariable Long id) {
+        NetworkResponse response = playerService.findSinglePlayer(id);
+        if (response instanceof NetworkResponse.Success) {
+            return  ResponseEntity.status(HttpStatus.CREATED).body(((NetworkResponse.Success) response).getPlayerResponse());
+        } else {
+            int code = ((NetworkResponse.Error) response).getCode();
+            String description = ((NetworkResponse.Error) response).getDescription();
+            return ResponseEntity.status(code).body(description);
+        }
     }
 
     @GetMapping(path = "/players")

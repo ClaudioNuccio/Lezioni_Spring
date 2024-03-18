@@ -15,7 +15,7 @@ import java.time.format.DateTimeParseException;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PlayerModel {
+public class    PlayerModel {
 
     private Long id;
     private String name;

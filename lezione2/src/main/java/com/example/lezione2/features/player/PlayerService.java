@@ -34,11 +34,13 @@ public class PlayerService {
         }
     }
 
-    public Optional<PlayerResponse> findSinglePlayer(Long id) {
+    public NetworkResponse findSinglePlayer(Long id) {
         Optional<PlayerEntity> response = playerRepository.findById(id);
         if (response.isPresent()) {
-            return Optional.of(PlayerModel.mapModelToResponse(PlayerModel.mapEntityToModel(response.get())));
-        } else return Optional.empty();
+            return NetworkResponse.Success.builder().playerResponse(PlayerModel.mapModelToResponse(PlayerModel.mapEntityToModel(response.get()))).build();
+        } else {
+            return NetworkResponse.Error.builder().code(530).description("Id is wrong").build();
+        }
     }
 
     public List<PlayerResponse> findAllPlayers() {

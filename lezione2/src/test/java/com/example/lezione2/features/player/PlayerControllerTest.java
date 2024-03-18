@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -30,7 +32,7 @@ class PlayerControllerTest {
     @MockBean
     private PlayerRepository giocatoreRepository;
     //    @InjectMocks
-//    private GiocatoreService giocatoreService;
+    //    private GiocatoreService giocatoreService;
     @Mock
     private PlayerController giocatoreController;
     @Autowired
@@ -82,6 +84,17 @@ class PlayerControllerTest {
         assertThat(result.getResponse().getStatus()).isEqualTo(600);
     }
 
+    @Test
+    void getSingleWithWrongId() throws Exception {
+        final Long id = 965L;
 
+        when(giocatoreRepository.findById(id)).thenReturn(Optional.empty());
 
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/v1/player/{id}", id))
+                .andDo(print())
+                .andReturn();
+        assertThat("Id is wrong").isEqualTo(result.getResponse().getContentAsString());
+        assertThat(result.getResponse().getStatus()).isEqualTo(530);
+    }
 }
