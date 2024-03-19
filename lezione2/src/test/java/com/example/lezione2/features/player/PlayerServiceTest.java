@@ -1,7 +1,7 @@
 package com.example.lezione2.features.player;
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
-import com.example.lezione2.features.player.dto.NetworkResponse;
+import com.example.lezione2.features.player.dto.PlayerNetworkResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,11 +24,11 @@ public class PlayerServiceTest {
     @Test
     void testCreatePlayerWithDateError() {
         CreatePlayerRequest playerRequestWithWrongData = Fixtures.playerRequestWithWrongDate();
-        NetworkResponse result = playerService.createPlayer(playerRequestWithWrongData);
-        if (result instanceof NetworkResponse.Error) {
+        PlayerNetworkResponse result = playerService.createPlayer(playerRequestWithWrongData);
+        if (result instanceof PlayerNetworkResponse.Error) {
             assertThat(result).isNotNull();
-            assertThat(((NetworkResponse.Error) result).getCode()).isEqualTo(600L);
-            assertThat(((NetworkResponse.Error) result).getDescription()).isEqualTo("Date of Birth is wrong");
+            assertThat(((PlayerNetworkResponse.Error) result).getCode()).isEqualTo(600L);
+            assertThat(((PlayerNetworkResponse.Error) result).getDescription()).isEqualTo("Date of Birth is wrong");
         }
 
     }
@@ -36,11 +36,11 @@ public class PlayerServiceTest {
     @Test
     void testCreatePlayerWithMalformedDate() {
         CreatePlayerRequest playerRequestWithMalformedDate = Fixtures.playerRequestWithMalformedDate();
-        NetworkResponse result = playerService.createPlayer(playerRequestWithMalformedDate);
-        if (result instanceof NetworkResponse.Error) {
+        PlayerNetworkResponse result = playerService.createPlayer(playerRequestWithMalformedDate);
+        if (result instanceof PlayerNetworkResponse.Error) {
             assertThat(result).isNotNull();
-            assertThat(((NetworkResponse.Error) result).getCode()).isEqualTo(600L);
-            assertThat(((NetworkResponse.Error) result).getDescription()).isEqualTo("Date of Birth is wrong");
+            assertThat(((PlayerNetworkResponse.Error) result).getCode()).isEqualTo(600L);
+            assertThat(((PlayerNetworkResponse.Error) result).getDescription()).isEqualTo("Date of Birth is wrong");
         }
 
     }
@@ -48,11 +48,11 @@ public class PlayerServiceTest {
     @Test
     void testCreatePlayerWithDateMissingTime() {
         CreatePlayerRequest playerRequestWithoutTime = Fixtures.playerRequestWithoutTime();
-        NetworkResponse result = playerService.createPlayer(playerRequestWithoutTime);
-        if (result instanceof NetworkResponse.Error) {
+        PlayerNetworkResponse result = playerService.createPlayer(playerRequestWithoutTime);
+        if (result instanceof PlayerNetworkResponse.Error) {
             assertThat(result).isNotNull();
-            assertThat(((NetworkResponse.Error) result).getCode()).isEqualTo(600L);
-            assertThat(((NetworkResponse.Error) result).getDescription()).isEqualTo("Date of Birth is wrong");
+            assertThat(((PlayerNetworkResponse.Error) result).getCode()).isEqualTo(600L);
+            assertThat(((PlayerNetworkResponse.Error) result).getDescription()).isEqualTo("Date of Birth is wrong");
         }
 
     }
@@ -65,11 +65,11 @@ public class PlayerServiceTest {
         when(playerRepository.saveAndFlush(Fixtures.playerEntity(playerRequestWithCorrectValues)))
                 .thenReturn(Fixtures.playerEntityWithId(playerRequestWithCorrectValues, playerId));
 
-        NetworkResponse result = playerService.createPlayer(playerRequestWithCorrectValues);
-        if (result instanceof NetworkResponse.Success) {
+        PlayerNetworkResponse result = playerService.createPlayer(playerRequestWithCorrectValues);
+        if (result instanceof PlayerNetworkResponse.Success) {
             assertThat(result).isNotNull();
-            assertThat(((NetworkResponse.Success) result).getPlayerResponse().getId()).isEqualTo(playerId);
-            assertThat(((NetworkResponse.Success) result).getPlayerResponse().getName()).isEqualTo("Manuel");
+            assertThat(((PlayerNetworkResponse.Success) result).getPlayer().getId()).isEqualTo(playerId);
+            assertThat(((PlayerNetworkResponse.Success) result).getPlayer().getName()).isEqualTo("Manuel");
         }
 
     }

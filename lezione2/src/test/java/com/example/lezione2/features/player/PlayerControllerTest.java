@@ -3,6 +3,7 @@ package com.example.lezione2.features.player;
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
 import com.example.lezione2.features.player.dto.PlayerResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,6 +99,51 @@ class PlayerControllerTest {
                 .andDo(print())
                 .andReturn();
         assertThat("Id is wrong").isEqualTo(result.getResponse().getContentAsString());
+        assertThat(result.getResponse().getStatus()).isEqualTo(530);
+    }
+
+    //FIX su Deserializzatore 1
+    @Test
+    void getAllPlayersReturnOneElement() throws Exception {
+        final Long playerId = 1L;
+
+        CreatePlayerRequest requestGioc = Fixtures.playerRequest();
+        when(giocatoreRepository.findAll()).thenReturn(List.of(Fixtures.playerEntityWithId(requestGioc, playerId)));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/v1/player/players"))
+                .andDo(print())
+                .andReturn();
+
+        List<PlayerResponse> response;
+        response = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), PlayerResponse[].class));
+        /*List<PlayerResponse> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<List<PlayerResponse>>(){}
+        );
+        */
+        assertThat(response.size()).isEqualTo(1);
+        assertThat(Fixtures.playerResponse(requestGioc, playerId)).isEqualTo(response.get(0));
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+    }
+
+    //FIX su Deserializzatore 2
+    @Test
+    void getAllPlayerWrongSituation() throws Exception{
+        when(giocatoreRepository.findAll()).thenReturn(Collections.emptyList());
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/v1/player/players"))
+                .andDo(print())
+                .andReturn();
+
+        List<PlayerResponse> response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, PlayerResponse.class)
+        );
+
+        assertThat(response.size()).isEqualTo(0);
+        assertThat("List empty").isEqualTo(result.getResponse().getContentAsString());
         assertThat(result.getResponse().getStatus()).isEqualTo(530);
     }
 }

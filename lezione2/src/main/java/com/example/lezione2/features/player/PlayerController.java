@@ -1,16 +1,14 @@
 package com.example.lezione2.features.player;
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
-import com.example.lezione2.features.player.dto.NetworkResponse;
+import com.example.lezione2.features.player.dto.PlayerNetworkResponse;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/v1/player")
@@ -20,12 +18,12 @@ public class PlayerController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<?> createPlayer(@RequestBody CreatePlayerRequest request) {
-        NetworkResponse response = playerService.createPlayer(request);
-        if (response instanceof NetworkResponse.Success) {
-            return  ResponseEntity.status(HttpStatus.CREATED).body(((NetworkResponse.Success) response).getPlayerResponse());
+        PlayerNetworkResponse response = playerService.createPlayer(request);
+        if (response instanceof PlayerNetworkResponse.Success) {
+            return  ResponseEntity.status(HttpStatus.CREATED).body(((PlayerNetworkResponse.Success) response).getPlayer());
         } else {
-            int code = ((NetworkResponse.Error) response).getCode();
-            String description = ((NetworkResponse.Error) response).getDescription();
+            int code = ((PlayerNetworkResponse.Error) response).getCode();
+            String description = ((PlayerNetworkResponse.Error) response).getDescription();
             return ResponseEntity.status(code).body(description);
         }
 
@@ -33,18 +31,18 @@ public class PlayerController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getSinglePlayer(@PathVariable Long id) {
-        NetworkResponse response = playerService.findSinglePlayer(id);
-        if (response instanceof NetworkResponse.Success) {
-            return  ResponseEntity.status(HttpStatus.CREATED).body(((NetworkResponse.Success) response).getPlayerResponse());
+        PlayerNetworkResponse response = playerService.findSinglePlayer(id);
+        if (response instanceof PlayerNetworkResponse.Success) {
+            return  ResponseEntity.status(HttpStatus.CREATED).body(((PlayerNetworkResponse.Success) response).getPlayer());
         } else {
-            int code = ((NetworkResponse.Error) response).getCode();
-            String description = ((NetworkResponse.Error) response).getDescription();
+            int code = ((PlayerNetworkResponse.Error) response).getCode();
+            String description = ((PlayerNetworkResponse.Error) response).getDescription();
             return ResponseEntity.status(code).body(description);
         }
     }
 
     @GetMapping(path = "/players")
-    public List<PlayerResponse> getAllPlayer() {
+    public PlayerNetworkResponse getAllPlayer() {
         return playerService.findAllPlayers();
     }
 

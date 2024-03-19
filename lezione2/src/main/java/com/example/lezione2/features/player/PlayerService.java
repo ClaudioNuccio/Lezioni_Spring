@@ -1,11 +1,9 @@
 package com.example.lezione2.features.player;
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
-import com.example.lezione2.features.player.dto.NetworkResponse;
+import com.example.lezione2.features.player.dto.PlayerNetworkResponse;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -21,36 +19,42 @@ public class PlayerService {
     @Autowired
     PlayerRepository playerRepository;
 
-    public NetworkResponse createPlayer(CreatePlayerRequest request) {
+    public PlayerNetworkResponse createPlayer(CreatePlayerRequest request) {
         if (convertDate(request.getDateOfBirth()) == null) {
-            return NetworkResponse.Error.builder().code(600).description("Date of Birth is wrong").build();
+            return PlayerNetworkResponse.Error.builder().code(600).description("Date of Birth is wrong").build();
             //return new ResponseEntity<>("Date of birth is wrong", HttpStatus.BAD_REQUEST);
         } else {
             PlayerModel playerRequestModel = mapRequestToModel(request);
             PlayerEntity playerRequestEntity = mapModelToEntity(playerRequestModel);
             PlayerEntity savedPlayerEntity = playerRepository.saveAndFlush(playerRequestEntity);
             PlayerModel playerResponseModel = mapEntityToModel(savedPlayerEntity);
-            return NetworkResponse.Success.builder().playerResponse(mapModelToResponse(playerResponseModel)).build();
+            return PlayerNetworkResponse.Success.builder().player(mapModelToResponse(playerResponseModel)).build();
         }
     }
 
-    public NetworkResponse findSinglePlayer(Long id) {
+    public PlayerNetworkResponse findSinglePlayer(Long id) {
         Optional<PlayerEntity> response = playerRepository.findById(id);
         if (response.isPresent()) {
-            return NetworkResponse.Success.builder().playerResponse(PlayerModel.mapModelToResponse(PlayerModel.mapEntityToModel(response.get()))).build();
+            return PlayerNetworkResponse.Success.builder().player(PlayerModel.mapModelToResponse(PlayerModel.mapEntityToModel(response.get()))).build();
         } else {
-            return NetworkResponse.Error.builder().code(530).description("Id is wrong").build();
+            return PlayerNetworkResponse.Error.builder().code(530).description("Id is wrong").build();
         }
     }
 
-    public List<PlayerResponse> findAllPlayers() {
+    public PlayerNetworkResponse findAllPlayers() {
         List<PlayerEntity> response = playerRepository.findAll();
-        List<PlayerResponse> result = new ArrayList<>();
-        for (PlayerEntity playerEntity : response) {
-            PlayerModel entityToModel = PlayerModel.mapEntityToModel(playerEntity);
-            result.add(PlayerModel.mapModelToResponse(entityToModel));
+
+        if(response.isEmpty()){
+            return PlayerNetworkResponse.Error.builder().code(530).description("List empty").build();
+        } else {
+            List<PlayerResponse> result = new ArrayList<>();
+            for (PlayerEntity playerEntity : response) {
+                PlayerModel entityToModel = PlayerModel.mapEntityToModel(playerEntity);
+                result.add(PlayerModel.mapModelToResponse(entityToModel));
+            }
+            return PlayerNetworkResponse.SuccessWithList.builder().players(result).build();
         }
-        return result;
+
     }
 
     public PlayerResponse updatePlayer(Long id, CreatePlayerRequest createPlayerRequest) {
