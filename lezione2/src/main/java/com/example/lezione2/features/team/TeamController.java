@@ -4,13 +4,14 @@ import com.example.lezione2.features.contract.ContractEntity;
 import com.example.lezione2.features.contract.ContractService;
 import com.example.lezione2.features.team.dto.CreateTeamRequest;
 import com.example.lezione2.features.team.dto.TeamAndPlayerResponse;
+import com.example.lezione2.features.team.dto.TeamNetworkResponse;
 import com.example.lezione2.features.team.dto.TeamResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/v1/team")
@@ -21,28 +22,47 @@ public class TeamController {
     ContractService contractService;
 
     @PostMapping(path = "/create")
-    public ResponseEntity<TeamResponse> createTeam(@RequestBody CreateTeamRequest createTeamRequest) {
-        return ResponseEntity.status(200).body(teamService.createTeam(createTeamRequest));
+    public ResponseEntity<?> createTeam(@RequestBody CreateTeamRequest createTeamRequest) {
+        TeamNetworkResponse.Success response = (TeamNetworkResponse.Success) teamService.createTeam(createTeamRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response.getTeam());
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getSingleTeam(@PathVariable Long id) {
-        Optional<TeamResponse> response = teamService.findSingleTeam(id);
-        if (response.isPresent()) {
-            return ResponseEntity.status(200).body(response.get());
-        }else {
-            return ResponseEntity.status(419).body("Team Not Found");
+        TeamNetworkResponse response = teamService.findSingleTeam(id);
+        if (response instanceof TeamNetworkResponse.Success) {
+            return  ResponseEntity.status(HttpStatus.CREATED).body(((TeamNetworkResponse.Success) response).getTeam());
+        } else {
+            int code = ((TeamNetworkResponse.Error) response).getCode();
+            String description = ((TeamNetworkResponse.Error) response).getDescription();
+            return ResponseEntity.status(code).body(description);
         }
     }
 
     @GetMapping(path = "/teams")
-    public List<TeamResponse> getAllTeam() {
-        return teamService.findAllTeams();
+    public ResponseEntity<?> getAllTeam() {
+        TeamNetworkResponse response = teamService.findAllTeams();
+
+        if (response instanceof TeamNetworkResponse.SuccessWithList) {
+            return  ResponseEntity.status(HttpStatus.OK).body(((TeamNetworkResponse.SuccessWithList) response).getTeams());
+        } else {
+            int code = ((TeamNetworkResponse.Error) response).getCode();
+            String description = ((TeamNetworkResponse.Error) response).getDescription();
+            return ResponseEntity.status(code).body(description);
+        }
     }
 
     @PutMapping(path = "/{id}/update")
-    public TeamResponse updateTeam(@PathVariable Long id, @RequestBody CreateTeamRequest createTeamRequest) {
-        return teamService.updateTeam(id, createTeamRequest);
+    public ResponseEntity<?> updateTeam(@PathVariable Long id, @RequestBody CreateTeamRequest createTeamRequest) {
+        TeamNetworkResponse response = teamService.updateTeam(id, createTeamRequest);
+
+        if (response instanceof TeamNetworkResponse.Success) {
+            return  ResponseEntity.status(HttpStatus.OK).body(((TeamNetworkResponse.Success) response).getTeam());
+        } else {
+            int code = ((TeamNetworkResponse.Error) response).getCode();
+            String description = ((TeamNetworkResponse.Error) response).getDescription();
+            return ResponseEntity.status(code).body(description);
+        }
     }
 
     @DeleteMapping(path = "/{id}/delete")
