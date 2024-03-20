@@ -2,8 +2,10 @@ package com.example.lezione2.features.player;
 
 
 import com.example.lezione2.features.player.dto.CreatePlayerRequest;
+import com.example.lezione2.features.player.dto.PlayerNetworkResponse;
 import com.example.lezione2.features.player.dto.PlayerResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -102,7 +104,6 @@ class PlayerControllerTest {
         assertThat(result.getResponse().getStatus()).isEqualTo(530);
     }
 
-    //FIX su Deserializzatore 1
     @Test
     void getAllPlayersReturnOneElement() throws Exception {
         final Long playerId = 1L;
@@ -115,19 +116,14 @@ class PlayerControllerTest {
                 .andDo(print())
                 .andReturn();
 
-        List<PlayerResponse> response;
-        response = Arrays.asList(objectMapper.readValue(result.getResponse().getContentAsString(), PlayerResponse[].class));
-        /*List<PlayerResponse> response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                new TypeReference<List<PlayerResponse>>(){}
-        );
-        */
+        List<PlayerResponse> response = objectMapper.readerForListOf(PlayerResponse.class).withRootName("players")
+                .readValue(result.getResponse().getContentAsString());
+
         assertThat(response.size()).isEqualTo(1);
         assertThat(Fixtures.playerResponse(requestGioc, playerId)).isEqualTo(response.get(0));
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
     }
 
-    //FIX su Deserializzatore 2
     @Test
     void getAllPlayerWrongSituation() throws Exception{
         when(giocatoreRepository.findAll()).thenReturn(Collections.emptyList());
@@ -137,13 +133,11 @@ class PlayerControllerTest {
                 .andDo(print())
                 .andReturn();
 
-        List<PlayerResponse> response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, PlayerResponse.class)
-        );
 
-        assertThat(response.size()).isEqualTo(0);
-        assertThat("List empty").isEqualTo(result.getResponse().getContentAsString());
-        assertThat(result.getResponse().getStatus()).isEqualTo(530);
+        PlayerNetworkResponse.Error response = objectMapper.readValue(result.getResponse().getContentAsString(), PlayerNetworkResponse.Error.class);
+
+
+        assertThat("List empty").isEqualTo(response.getDescription());
+        assertThat(530).isEqualTo(response.getCode());
     }
 }

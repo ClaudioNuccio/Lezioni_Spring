@@ -1,5 +1,6 @@
 package com.example.lezione2.features.player.dto;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 
 @Data
@@ -7,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonRootName(value = "players")
 public class PlayerResponse {
 
     private Long id;
